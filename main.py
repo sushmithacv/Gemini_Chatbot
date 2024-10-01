@@ -4,7 +4,7 @@ from googletrans import Translator
 import googlemaps
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from youtube_search import YoutubeSearch
+
 import speech_recognition as sr
 from gtts import gTTS
 import requests
