@@ -24,13 +24,13 @@ st.markdown("""
             word-wrap: break-word;
         }
         .user {
-            background-color: #007bff; /* Bright blue for user messages */
+            background-color: #4caf50; /* Green for user messages */
             color: white;
             text-align: right;
             margin-left: auto; /* Align user messages to the right */
         }
         .assistant {
-            background-color: #e2e2e2; /* Light gray for assistant messages */
+            background-color: #f1f1f1; /* Light gray for assistant messages */
             color: black;
             text-align: left;
             margin-right: auto; /* Align assistant messages to the left */
@@ -68,9 +68,9 @@ st.subheader("Chat with our AI Assistant")
 # Display the chat history in a more organized format
 for message in st.session_state.chat_session.history:
     role = translate_role_for_streamlit(message.role)
-    # Use message.content instead of message.parts[0].text for the response
+    message_text = message.parts[0].text if message.parts else "Message not found"  # Use the correct attribute here
     with st.chat_message(role):
-        st.markdown(f"<div class='chat-message {role}'>{message.content}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='chat-message {role}'>{message_text}</div>", unsafe_allow_html=True)
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
@@ -84,4 +84,4 @@ if user_prompt:
 
     # Display Gemini-Pro's response
     with st.chat_message("assistant"):
-        st.markdown(f"<div class='chat-message assistant'>{gemini_response.text}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='chat-message assistant'>{gemini_response.parts[0].text}</div>", unsafe_allow_html=True)
