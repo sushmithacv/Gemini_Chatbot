@@ -1,0 +1,12 @@
+python-dotenv==1.0.1
+google-generativeai==0.3.2
+streamlit==1.30.0
+google-cloud-dialogflow
+google-auth
+google-cloud
+googlemaps
+googletrans==4.0.0-rc1
+spotipy
+SpeechRecognition
+gTTS
+youtube-search-python
