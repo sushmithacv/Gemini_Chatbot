@@ -10,37 +10,37 @@ load_dotenv()
 st.set_page_config(
     page_title="Chat with Gemini-Pro!",
     page_icon=":brain:",  # Favicon emoji
-    layout="wide",  # Use a wide layout for more space
+    layout="centered",  # Page layout option
 )
 
-# Custom CSS for styling
+# CSS for styling
 st.markdown("""
     <style>
-        .chat-message {
-            padding: 10px;
-            border-radius: 10px;
-            margin: 5px 0;
-            max-width: 75%;
-            word-wrap: break-word;
-        }
-        .user {
-            background-color: #4caf50; /* Green for user messages */
-            color: white;
-            text-align: right;
-            margin-left: auto; /* Align user messages to the right */
-        }
-        .assistant {
-            background-color: #f1f1f1; /* Light gray for assistant messages */
-            color: black;
-            text-align: left;
-            margin-right: auto; /* Align assistant messages to the left */
-        }
-        h1, h2 {
-            color: #333; /* Darker text color for headers */
-        }
-        h2 {
-            margin-bottom: 10px; /* Space below subheader */
-        }
+    body {
+        background-color: #f5f5f5;
+    }
+    .chat-message {
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px 0;
+    }
+    .user {
+        background-color: #e0f7fa; /* Light cyan */
+        text-align: left;
+    }
+    .assistant {
+        background-color: #ffe0b2; /* Light orange */
+        text-align: left;
+    }
+    .copy-button {
+        margin-top: 5px;
+        background-color: #4CAF50; /* Green */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        padding: 5px 10px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -63,25 +63,49 @@ if "chat_session" not in st.session_state:
 
 # Display the chatbot's title on the page
 st.title("Gemini Pro - ChatBot")
-st.subheader("Chat with our AI Assistant")
 
 # Display the chat history in a more organized format
 for message in st.session_state.chat_session.history:
     role = translate_role_for_streamlit(message.role)
-    message_text = message.parts[0].text if message.parts else "Message not found"  # Use the correct attribute here
+    chat_content = message.parts[0].text if role == "assistant" else message.content
+
     with st.chat_message(role):
-        st.markdown(f"<div class='chat-message {role}'>{message_text}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='chat-message {role}'>{chat_content}</div>", unsafe_allow_html=True)
+        # Copy button for assistant messages
+        if role == "assistant":
+            st.button("Copy Response", key=message.id, help="Copy this response to clipboard", on_click=lambda msg=chat_content: st.session_state.clipboard_msg.update({msg: True}))
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
-
 if user_prompt:
     # Add user's message to chat and display it
-    st.chat_message("user").markdown(f"<div class='chat-message user'>{user_prompt}</div>", unsafe_allow_html=True)
+    st.chat_message("user").markdown(user_prompt)
 
     # Send user's message to Gemini-Pro and get the response
     gemini_response = st.session_state.chat_session.send_message(user_prompt)
 
     # Display Gemini-Pro's response
     with st.chat_message("assistant"):
-        st.markdown(f"<div class='chat-message assistant'>{gemini_response.parts[0].text}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='chat-message assistant'>{gemini_response.text}</div>", unsafe_allow_html=True)
+        st.button("Copy Response", key="copy_response", help="Copy this response to clipboard", on_click=lambda msg=gemini_response.text: st.session_state.clipboard_msg.update({msg: True}))
+
+# Script for copying to clipboard
+if "clipboard_msg" not in st.session_state:
+    st.session_state.clipboard_msg = {}
+
+# Add a JavaScript function to copy text to the clipboard
+st.markdown("""
+    <script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            alert('Copied to clipboard: ' + text);
+        }, function(err) {
+            alert('Error copying text: ', err);
+        });
+    }
+    </script>
+""", unsafe_allow_html=True)
+
+# Execute copy to clipboard for any messages
+for msg in st.session_state.clipboard_msg.keys():
+    st.markdown(f"<script>copyToClipboard('{msg}');</script>", unsafe_allow_html=True)
