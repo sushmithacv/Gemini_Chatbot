@@ -18,22 +18,28 @@ st.markdown("""
     <style>
         .chat-message {
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 10px;
             margin: 5px 0;
+            max-width: 75%;
+            word-wrap: break-word;
         }
         .user {
-            background-color: #007bff; /* User message color */
+            background-color: #007bff; /* Bright blue for user messages */
             color: white;
             text-align: right;
+            margin-left: auto; /* Align user messages to the right */
         }
         .assistant {
-            background-color: #f1f1f1; /* Assistant message color */
+            background-color: #e2e2e2; /* Light gray for assistant messages */
             color: black;
             text-align: left;
+            margin-right: auto; /* Align assistant messages to the left */
         }
-        .streamlit-expanderHeader {
-            font-size: 18px;
-            font-weight: bold;
+        h1, h2 {
+            color: #333; /* Darker text color for headers */
+        }
+        h2 {
+            margin-bottom: 10px; /* Space below subheader */
         }
     </style>
 """, unsafe_allow_html=True)
@@ -62,8 +68,9 @@ st.subheader("Chat with our AI Assistant")
 # Display the chat history in a more organized format
 for message in st.session_state.chat_session.history:
     role = translate_role_for_streamlit(message.role)
-    with st.chat_message(role, key=message.id):
-        st.markdown(f"<div class='chat-message {role}'>{message.parts[0].text}</div>", unsafe_allow_html=True)
+    # Use message.content instead of message.parts[0].text for the response
+    with st.chat_message(role):
+        st.markdown(f"<div class='chat-message {role}'>{message.content}</div>", unsafe_allow_html=True)
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
