@@ -9,4 +9,4 @@ googletrans==4.0.0-rc1
 spotipy
 SpeechRecognition
 gTTS
-
+youtube-search-python
