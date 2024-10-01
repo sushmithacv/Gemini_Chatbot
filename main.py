@@ -10,9 +10,9 @@ from gtts import gTTS
 import requests
 import dialogflow_v2 as dialogflow
 import tempfile
+from dotenv import load_dotenv
 
 # Load environment variables
-from dotenv import load_dotenv
 load_dotenv()
 
 # API Keys
@@ -80,14 +80,20 @@ def get_dialogflow_response(text, session_id="current_user", language_code='en')
 # Spotify music search
 def search_spotify_music(query):
     result = sp.search(q=query, type='track', limit=1)
-    track = result['tracks']['items'][0]
-    return f"Listen on Spotify: {track['external_urls']['spotify']}"
+    if result['tracks']['items']:
+        track = result['tracks']['items'][0]
+        return f"Listen on Spotify: {track['external_urls']['spotify']}"
+    else:
+        return "No tracks found."
 
 # YouTube video search
 def search_youtube(query):
     results = YoutubeSearch(query, max_results=1).to_dict()
-    video_url = f"https://www.youtube.com/watch?v={results[0]['id']}"
-    return f"Watch on YouTube: {video_url}"
+    if results:
+        video_url = f"https://www.youtube.com/watch?v={results[0]['id']}"
+        return f"Watch on YouTube: {video_url}"
+    else:
+        return "No videos found."
 
 # Google Maps search
 def get_location_info(query):
