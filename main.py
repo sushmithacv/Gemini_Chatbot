@@ -2,6 +2,7 @@ import os
 
 import streamlit as st
 from dotenv import load_dotenv
+
 import google.generativeai as gen_ai
 
 
@@ -36,7 +37,7 @@ if "chat_session" not in st.session_state:
 
 
 # Display the chatbot's title on the page
-st.title(" Gemini Pro - ChatBot")
+st.title("🤖 Gemini Pro - ChatBot")
 
 # Display the chat history
 for message in st.session_state.chat_session.history:
